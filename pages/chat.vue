@@ -2,10 +2,37 @@
   <div class="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-pink-50 font-sans">
     <!-- Content -->
     <div class="relative z-10">
+      <!-- Back Button -->
+      <div class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+        <button
+          @click="goToHome"
+          class="flex items-center gap-2 text-gray-400 hover:text-gray-600 transition-colors duration-200 group"
+        >
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            class="group-hover:-translate-x-1 transition-transform duration-200"
+          >
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          <span class="text-sm opacity-70 group-hover:opacity-100">뒤로</span>
+        </button>
+      </div>
+
       <!-- Header with Logo -->
-      <div class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-6">
+      <div class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-6">
         <div class="flex flex-col items-center justify-center mb-8">
-          <div class="flex items-center gap-3 mb-4">
+          <div 
+            class="flex items-center gap-3 mb-4 cursor-pointer hover:opacity-80 transition-opacity duration-200"
+            @click="goToHome"
+          >
             <img 
               src="/logo.png" 
               alt="I'm힘 Logo" 
@@ -107,10 +134,15 @@ interface Message {
   text: string
 }
 
+const router = useRouter()
 const userText = ref('')
 const messages = ref<Message[]>([])
 const loading = ref(false)
 const messagesContainer = ref<HTMLElement | null>(null)
+
+const goToHome = () => {
+  router.push('/')
+}
 
 const scrollToBottom = () => {
   nextTick(() => {
