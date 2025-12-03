@@ -80,6 +80,25 @@ export default defineEventHandler(async (event) => {
   const clientIP = getRequestIP(event) || 'unknown'
   const ipHash = createHash('sha256').update(clientIP).digest('hex')
 
+  // 사용자 메시지를 먼저 Firestore에 저장 (AI 응답 전에 저장하여 페이지를 떠나도 저장되도록)
+  let sessionDocRef: any = null
+  try {
+    const db = getAdminFirestore()
+    if (db) {
+      sessionDocRef = await db.collection('aiSessions').add({
+        userText: userText.substring(0, 500), // 처음 500자만 저장 (너무 길면 제한)
+        sessionType,
+        clientType: 'web',
+        ipHash,
+        status: 'pending', // AI 응답 대기 중
+        createdAt: FieldValue.serverTimestamp(),
+      })
+    }
+  } catch (firestoreError: any) {
+    // Firestore 저장 실패는 로그만 남기고 계속 진행
+    console.warn('Firestore initial save failed:', firestoreError.message)
+  }
+
   try {
     // OpenAI Chat Completions 호출
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -135,21 +154,36 @@ export default defineEventHandler(async (event) => {
       }
     }
 
-    // Firestore에 저장 (실패해도 AI 응답은 정상 반환)
+    // Firestore에 AI 응답 업데이트 (이미 생성된 문서가 있으면 업데이트, 없으면 새로 생성)
     try {
       const db = getAdminFirestore()
       if (db) {
-        await db.collection('aiSessions').add({
-          summary,
-          sessionType,
-          clientType: 'web',
-          ipHash,
-          createdAt: FieldValue.serverTimestamp(),
-        })
+        if (sessionDocRef) {
+          // 이미 생성된 문서가 있으면 업데이트
+          await sessionDocRef.update({
+            summary,
+            reply: reply.substring(0, 2000), // AI 응답 처음 2000자만 저장
+            status: 'completed',
+            completedAt: FieldValue.serverTimestamp(),
+          })
+        } else {
+          // 문서가 없으면 새로 생성 (fallback)
+          await db.collection('aiSessions').add({
+            userText: userText.substring(0, 500),
+            summary,
+            reply: reply.substring(0, 2000),
+            sessionType,
+            clientType: 'web',
+            ipHash,
+            status: 'completed',
+            createdAt: FieldValue.serverTimestamp(),
+            completedAt: FieldValue.serverTimestamp(),
+          })
+        }
       }
     } catch (firestoreError: any) {
       // Firestore 저장 실패는 로그만 남기고 계속 진행
-      console.warn('Firestore save failed (this is OK in development):', firestoreError.message)
+      console.warn('Firestore update failed:', firestoreError.message)
     }
 
     return {

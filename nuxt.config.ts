@@ -8,7 +8,16 @@ export default defineNuxtConfig({
     '@vee-validate/nuxt',
     '@nuxtjs/tailwindcss',
   ],
-  css: ['~/assets/css/main.css'],
+  css: [
+    '~/assets/css/main.css',
+  ],
+  tailwindcss: {
+    cssPath: '~/assets/css/main.css',
+    configPath: 'tailwind.config.js',
+    exposeConfig: false,
+    injectPosition: 0,
+    viewer: false,
+  },
   postcss: {
     plugins: {
       tailwindcss: {},
@@ -71,7 +80,13 @@ export default defineNuxtConfig({
           "'self'",
           "'unsafe-inline'",
           "https://www.google.com",
-          "https://www.gstatic.com"
+          "https://www.gstatic.com",
+          "https://cdn.jsdelivr.net"
+        ],
+        'font-src': [
+          "'self'",
+          "https://cdn.jsdelivr.net",
+          "data:"
         ]
       }
     }
