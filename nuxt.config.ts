@@ -1,7 +1,7 @@
 export default defineNuxtConfig({
   ssr: false, // SPA 모드로 설정
   nitro: {
-    preset: 'static'
+    preset: 'vercel'
   },
   modules: [
     '@pinia/nuxt',
@@ -16,6 +16,7 @@ export default defineNuxtConfig({
     },
   },
   runtimeConfig: {
+    openaiApiKey: process.env.NUXT_OPENAI_API_KEY,
     public: {
       FIREBASE_API_KEY: process.env.NUXT_PUBLIC_FIREBASE_API_KEY,
       FIREBASE_AUTH_DOMAIN: process.env.NUXT_PUBLIC_FIREBASE_AUTH_DOMAIN,

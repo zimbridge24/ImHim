@@ -1,0 +1,11 @@
+# Netlify 배포 설정 (선택사항)
+[build]
+  command = "npm run build"
+  publish = ".output/public"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+

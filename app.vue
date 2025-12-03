@@ -1,27 +1,22 @@
 <template>
-  <div>
+  <div id="app">
     <NuxtPage />
   </div>
 </template>
 
-<script setup>
-// Auth 초기화를 앱 시작 시에 실행
-const user = useUserStore()
-
-// 클라이언트 사이드에서만 auth 초기화
-onMounted(() => {
-  console.log('App mounted, initializing auth...')
-  user.initializeAuth()
-})
-
-// Auth 상태 변화 감지
-watch(() => user.authReady, (ready) => {
-  if (ready) {
-    console.log('Auth is ready, user state:', {
-      isAuthenticated: user.isAuthenticated,
-      role: user.role,
-      userId: user.currentUser?.uid
-    })
-  }
-})
+<script setup lang="ts">
+// 예전 코드에서 useUserStore 같은 건 전부 제거합니다.
+// 여기서는 아무 상태도 사용하지 않고,
+// 단순히 페이지를 렌더링만 합니다.
 </script>
+
+<style>
+/* 간단한 글로벌 스타일 (원하면 조정 가능) */
+html,
+body,
+#app {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+</style>
