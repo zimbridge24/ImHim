@@ -35,6 +35,14 @@ At the end, generate a 3-line summary in this exact format:
 Always respond in Korean.`
 
 export default defineEventHandler(async (event) => {
+  // GET 요청 차단
+  if (event.method === 'GET') {
+    throw createError({
+      statusCode: 405,
+      statusMessage: 'Method Not Allowed. Use POST.',
+    })
+  }
+
   const config = useRuntimeConfig()
   const apiKey = config.openaiApiKey
 
@@ -45,12 +53,27 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const body = await readBody<{ userText: string; sessionType: string }>(event)
-
-  if (!body?.userText || !body.userText.trim()) {
+  let body: { userText?: string; sessionType?: string }
+  try {
+    body = await readBody<{ userText: string; sessionType: string }>(event)
+  } catch (error: any) {
     throw createError({
       statusCode: 400,
-      statusMessage: 'userText is required',
+      statusMessage: 'Invalid request body. Expected JSON with userText field.',
+    })
+  }
+
+  if (!body || typeof body !== 'object') {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Request body must be a JSON object',
+    })
+  }
+
+  if (!body.userText || typeof body.userText !== 'string' || !body.userText.trim()) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'userText is required and must be a non-empty string',
     })
   }
 
