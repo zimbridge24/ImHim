@@ -14,21 +14,32 @@ export const getAdminFirestore = (): ReturnType<typeof getFirestore> | null => {
 
   try {
     if (getApps().length === 0) {
-      const projectId = process.env.FIREBASE_PROJECT_ID || process.env.GCLOUD_PROJECT || 'i-mhim';
-      
-      // 서비스 계정 키 파일 경로 확인
-      const serviceAccountPath = process.env.GOOGLE_APPLICATION_CREDENTIALS || 
-                                  join(process.cwd(), 'serviceAccountKey.json');
+      const projectId = process.env.FIREBASE_PROJECT_ID || process.env.GCLOUD_PROJECT || process.env.NUXT_PUBLIC_FIREBASE_PROJECT_ID || 'i-mhim';
       
       let credential;
-      try {
-        // 서비스 계정 키 파일이 있으면 사용
-        const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
-        credential = cert(serviceAccount);
-      } catch (fileError) {
-        // 파일이 없으면 프로젝트 ID만으로 시도 (프로덕션 환경에서 작동)
-        console.warn('Service account key not found, using project ID only:', serviceAccountPath);
-        credential = undefined;
+      
+      // Vercel 환경 변수에서 서비스 계정 키 확인 (우선순위 1)
+      if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+        try {
+          const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+          credential = cert(serviceAccount);
+        } catch (parseError) {
+          console.warn('Failed to parse FIREBASE_SERVICE_ACCOUNT_KEY:', parseError);
+        }
+      }
+      
+      // 파일 시스템에서 서비스 계정 키 확인 (우선순위 2)
+      if (!credential) {
+        try {
+          const serviceAccountPath = process.env.GOOGLE_APPLICATION_CREDENTIALS || 
+                                      join(process.cwd(), 'serviceAccountKey.json');
+          const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
+          credential = cert(serviceAccount);
+        } catch (fileError) {
+          // 파일이 없으면 프로젝트 ID만으로 시도 (프로덕션 환경에서 작동)
+          console.warn('Service account key not found, using project ID only');
+          credential = undefined;
+        }
       }
 
       initializeApp({

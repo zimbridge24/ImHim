@@ -1,5 +1,5 @@
 // server/api/ai-chat.post.ts
-import { defineEventHandler, readBody, getRequestIP } from 'h3'
+import { defineEventHandler, readBody, getRequestIP, createError } from 'h3'
 import { useRuntimeConfig } from '#imports'
 import { getAdminFirestore } from '../plugins/firebase-admin'
 import { FieldValue } from 'firebase-admin/firestore'
