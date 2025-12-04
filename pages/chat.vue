@@ -29,7 +29,7 @@
       <!-- Logo at top left -->
       <div class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-4">
         <img 
-          src="/logo.png" 
+          src="/ImHim.png" 
           alt="ImHim Logo" 
           class="h-12 sm:h-16 md:h-20 w-auto object-contain cursor-pointer hover:opacity-80 transition-opacity duration-200"
           @click="goToHome"
