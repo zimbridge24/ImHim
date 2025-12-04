@@ -3,14 +3,13 @@
     <!-- I AM HIM Brand -->
     <div class="text-center mb-6 sm:mb-8">
       <h1 class="text-2xl sm:text-3xl md:text-4xl font-semibold mb-4 sm:mb-6" style="color: #6B9B7A;">
-        I AM HIM
+        I am Him
       </h1>
       <!-- Circular Icon with Graph Symbol -->
       <div class="flex justify-center mb-6 sm:mb-8">
         <div class="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full bg-slate-900 flex items-center justify-center">
           <svg class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M3 12L7 8L10 12L14 6L21 12" stroke="#4ADE80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M3 18L7 14L10 18L14 12L21 18" stroke="#4ADE80" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M2 12 L6 12 L7 4 L8 20 L9 12 L13 12 L14 6 L15 18 L16 12 L20 12 L22 12" stroke="#00ff01" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
           </svg>
         </div>
       </div>
@@ -18,7 +17,7 @@
 
     <!-- Main Title -->
     <div class="text-center mb-6 sm:mb-8 max-w-3xl">
-      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6" style="color: #1E3A5F;">
+      <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 sm:mb-6" style="color: #2563eb;">
         국제 발기 기능 지수(IIEF-5)
       </h2>
       
@@ -27,7 +26,7 @@
         <p class="text-xl sm:text-2xl md:text-3xl font-bold leading-tight" style="color: #1E3A5F;">
           남자의 자신감을
         </p>
-        <p class="text-xl sm:text-2xl md:text-3xl font-bold leading-tight" style="color: #1E3A5F;">
+        <p class="text-xl sm:text-2xl md:text-3xl font-bold leading-tight" style="color: #2563eb;">
           숫자로 확인하는
         </p>
         <p class="text-xl sm:text-2xl md:text-3xl font-bold leading-tight" style="color: #1E3A5F;">
