@@ -126,6 +126,9 @@
 </template>
 
 <script setup lang="ts">
+import { ref, nextTick, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+
 interface Message {
   type: 'user' | 'ai'
   text: string
@@ -136,6 +139,7 @@ const userText = ref('')
 const messages = ref<Message[]>([])
 const loading = ref(false)
 const messagesContainer = ref<HTMLElement | null>(null)
+const hasAutoSent = ref(false)
 
 const goToHome = () => {
   router.push('/')
@@ -203,6 +207,34 @@ const handleSend = async () => {
     scrollToBottom()
   }
 }
+
+// Auto-send question from test result page
+onMounted(async () => {
+  // Track page view
+  try {
+    await $fetch('/api/page-view', {
+      method: 'POST',
+      body: {
+        page: 'chat',
+      },
+    })
+  } catch (error) {
+    // Silent fail
+  }
+  
+  nextTick(() => {
+    const pendingQuestion = sessionStorage.getItem('pending_question')
+    if (pendingQuestion && !hasAutoSent.value) {
+      hasAutoSent.value = true
+      userText.value = pendingQuestion
+      sessionStorage.removeItem('pending_question')
+      // Auto-send after a short delay
+      setTimeout(() => {
+        handleSend()
+      }, 500)
+    }
+  })
+})
 </script>
 
 <style scoped>

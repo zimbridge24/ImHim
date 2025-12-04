@@ -13,18 +13,6 @@
     <!-- Hero Section -->
     <div class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
       <div class="text-center mb-8">
-        <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 mb-3 tracking-tight">
-          I am Him
-        </h1>
-        <h2 class="text-xl sm:text-2xl md:text-3xl font-semibold text-slate-800 mb-4">
-          국제 발기 기능 지수(IIEF) 테스트
-        </h2>
-        <p class="text-base sm:text-lg text-slate-600 mb-2 max-w-2xl mx-auto">
-          남자의 컨디션과 자신감을 점검하는 과학적 셀프 체크
-        </p>
-        <p class="text-sm sm:text-base text-slate-500 mb-4 max-w-2xl mx-auto">
-          남자의 자신감을 숫자로 확인해보는 과학적 자기 점검
-        </p>
         <div class="bg-blue-50 border border-blue-200 rounded-2xl p-4 max-w-2xl mx-auto">
           <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">
             <strong class="text-slate-800">✓ 개인정보를 수집하지 않습니다.</strong> 결과는 브라우저 내에서만 계산됩니다.<br>
@@ -119,90 +107,169 @@
 
       <!-- Result Section -->
       <div v-if="showResult" class="space-y-6">
-        <!-- Score Display -->
-        <div class="bg-white rounded-3xl shadow-xl border border-gray-200 p-6 sm:p-8 text-center">
-          <div class="inline-block bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-3xl px-8 py-6 mb-6">
-            <div class="text-5xl sm:text-6xl font-bold mb-2">{{ totalScore }}</div>
-            <div class="text-lg opacity-90">점 / 25점</div>
+        <!-- Result Container for Image Export (점수부터 남자의 섬 전까지) -->
+        <div ref="resultContainer" class="space-y-6">
+          <!-- Score Display -->
+          <div class="bg-white rounded-3xl shadow-xl border border-gray-200 p-6 sm:p-8 text-center">
+            <div class="inline-block bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-3xl px-8 py-6 mb-6">
+              <div class="flex items-baseline justify-center gap-1">
+                <span ref="scoreDisplayElement" class="text-5xl sm:text-6xl font-bold leading-none" :data-score="totalScore" v-text="totalScore"></span>
+                <span class="text-lg opacity-90 leading-none whitespace-nowrap">점&nbsp;/&nbsp;25점</span>
+              </div>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">
+              {{ resultCategory }}
+            </h2>
+            <p class="text-lg text-slate-600">
+              {{ severityCategory }}
+            </p>
           </div>
-          <h2 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">
-            {{ resultCategory }}
-          </h2>
-          <p class="text-lg text-slate-600">
-            {{ severityCategory }}
-          </p>
-        </div>
 
-        <!-- Radar Chart -->
-        <div class="bg-white rounded-3xl shadow-xl border border-gray-200 p-6 sm:p-8">
-          <h3 class="text-xl sm:text-2xl font-semibold text-slate-900 mb-6 text-center">
+          <!-- Radar Chart -->
+        <div class="bg-white rounded-3xl shadow-xl border border-gray-200 p-2 sm:p-3">
+          <h3 class="text-xl sm:text-2xl font-semibold text-slate-900 mb-4 sm:mb-6 text-center">
             발기 기능 영역별 분석
           </h3>
-          <div class="flex justify-center">
-            <canvas ref="radarCanvas" class="max-w-full" width="400" height="400"></canvas>
+          <div class="flex justify-center overflow-visible">
+            <canvas ref="radarCanvas" class="max-w-full" width="600" height="600"></canvas>
           </div>
         </div>
 
-        <!-- Summary Text -->
-        <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl shadow-xl border border-blue-200 p-6 sm:p-8">
-          <h3 class="text-xl sm:text-2xl font-semibold text-slate-900 mb-4">
-            결과 요약
-          </h3>
-          <div class="space-y-3 text-base sm:text-lg text-slate-700 leading-relaxed">
-            <p>{{ summaryText }}</p>
+          <!-- Summary Text -->
+          <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl shadow-xl border border-blue-200 p-6 sm:p-8">
+            <h3 class="text-xl sm:text-2xl font-semibold text-slate-900 mb-4">
+              결과 요약
+            </h3>
+            <div class="space-y-3 text-base sm:text-lg text-slate-700 leading-relaxed">
+              <p>{{ summaryText }}</p>
+            </div>
+          </div>
+
+          <!-- Body & Mind Analysis -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-green-50 rounded-2xl p-6 border border-green-200">
+              <h4 class="text-lg font-semibold text-green-800 mb-3">Body (신체적 요인)</h4>
+              <p class="text-sm sm:text-base text-green-700 leading-relaxed">{{ bodyComment }}</p>
+            </div>
+            <div class="bg-purple-50 rounded-2xl p-6 border border-purple-200">
+              <h4 class="text-lg font-semibold text-purple-800 mb-3">Mind (심리적 요인)</h4>
+              <p class="text-sm sm:text-base text-purple-700 leading-relaxed">{{ mindComment }}</p>
+            </div>
+          </div>
+
+          <!-- Disclaimer -->
+          <div class="bg-gray-100 rounded-2xl p-5 border-l-4 border-gray-400">
+            <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
+              ※ 이 테스트는 국제 발기 기능 지수(IIEF-5)를 참고한 자가 체크 도구로, 의학적 진단이나 치료를 대신할 수 없습니다. 증상이 지속되거나 불편감이 크다면 반드시 비뇨의학과(비뇨기과) 전문의와 상담하시기 바랍니다.
+            </p>
           </div>
         </div>
 
-        <!-- Body & Mind Analysis -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div class="bg-green-50 rounded-2xl p-6 border border-green-200">
-            <h4 class="text-lg font-semibold text-green-800 mb-3">Body (신체적 요인)</h4>
-            <p class="text-sm sm:text-base text-green-700 leading-relaxed">{{ bodyComment }}</p>
-          </div>
-          <div class="bg-purple-50 rounded-2xl p-6 border border-purple-200">
-            <h4 class="text-lg font-semibold text-purple-800 mb-3">Mind (심리적 요인)</h4>
-            <p class="text-sm sm:text-base text-purple-700 leading-relaxed">{{ mindComment }}</p>
-          </div>
-        </div>
-
-        <!-- Disclaimer -->
-        <div class="bg-gray-100 rounded-2xl p-5 border-l-4 border-gray-400">
-          <p class="text-xs sm:text-sm text-gray-600 leading-relaxed">
-            ※ 이 테스트는 국제 발기 기능 지수(IIEF-5)를 참고한 자가 체크 도구로, 의학적 진단이나 치료를 대신할 수 없습니다. 증상이 지속되거나 불편감이 크다면 반드시 비뇨의학과(비뇨기과) 전문의와 상담하시기 바랍니다.
-          </p>
-        </div>
-
-        <!-- AI Chatbot Section -->
-        <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-3xl shadow-xl p-6 sm:p-8 text-white">
+        <!-- AI Consultation Section (이미지 저장에서 제외) -->
+        <div class="bg-white rounded-3xl shadow-xl border border-gray-200 p-6 sm:p-8">
+          <!-- 남자의 섬 Header -->
           <div class="text-center mb-6">
-            <h3 class="text-2xl sm:text-3xl font-bold mb-3">남자의 섬</h3>
-            <p class="text-base sm:text-lg text-slate-300 mb-4">
-              결과가 신경 쓰이시나요? 아래에서 익명으로 '남자의 섬'과 대화를 나눠보세요.
-            </p>
-            <p class="text-sm sm:text-base text-slate-400">
-              지금 점수가 왜 이렇게 나왔는지, 몸 때문인지 마음 때문인지 같이 정리해 드릴게요.
+            <h3 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-2">남자의 섬</h3>
+            <p class="text-sm sm:text-base text-slate-600 mb-6">AI Men's Health Coach</p>
+          </div>
+
+          <!-- Opening Message -->
+          <div class="bg-blue-50 rounded-2xl p-5 mb-6 border border-blue-100">
+            <p class="text-sm sm:text-base text-slate-700 leading-relaxed">
+              반가워요. 남자의 섬 입니다. 여기서 나누는 모든 대화는 익명으로 처리되니 안심하세요. 말하기 힘든 고민일수록 쿨하게 털어놓는 게 해결의 시작입니다. 저는 의사는 아니지만, '가장 현실적인 조언'을 드리는 AI 코치예요. 오늘 어떤 점이 가장 신경 쓰이셨나요?
             </p>
           </div>
-          
-          <div class="bg-slate-700/50 rounded-2xl p-5 mb-6">
-            <div class="flex items-start gap-3 mb-4">
-              <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
-                <span class="text-white font-bold">섬</span>
-              </div>
-              <div class="flex-1">
-                <p class="text-sm sm:text-base text-slate-200 leading-relaxed whitespace-pre-line">
-                  {{ chatbotOpeningMessage }}
+
+          <!-- Chat Messages (if any) -->
+          <div v-if="chatMessages.length > 0" class="mb-6 space-y-4 max-h-96 overflow-y-auto">
+            <div
+              v-for="(msg, index) in chatMessages"
+              :key="index"
+              :class="[
+                'flex w-full',
+                msg.type === 'user' ? 'justify-end' : 'justify-start'
+              ]"
+            >
+              <div
+                :class="[
+                  'max-w-[75%] rounded-2xl px-5 py-3.5 shadow-md',
+                  msg.type === 'user'
+                    ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-br-md'
+                    : 'bg-gray-100 text-gray-800 rounded-bl-md border border-gray-200'
+                ]"
+              >
+                <p class="text-sm sm:text-base leading-relaxed whitespace-pre-wrap">
+                  {{ msg.text }}
                 </p>
               </div>
             </div>
           </div>
 
-          <button
-            @click="goToChat"
-            class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold text-lg hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
-          >
-            대화 시작하기
-          </button>
+          <!-- Loading Indicator -->
+          <div v-if="chatLoading" class="mb-6 flex justify-start">
+            <div class="bg-gray-100 rounded-2xl rounded-bl-md px-5 py-3.5 shadow-md border border-gray-200">
+              <div class="flex gap-1.5">
+                <span class="w-2.5 h-2.5 bg-blue-400 rounded-full animate-bounce"></span>
+                <span class="w-2.5 h-2.5 bg-blue-400 rounded-full animate-bounce" style="animation-delay: 0.15s"></span>
+                <span class="w-2.5 h-2.5 bg-blue-400 rounded-full animate-bounce" style="animation-delay: 0.3s"></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Input Section -->
+          <div class="bg-gray-50 rounded-2xl p-4 mb-6 flex items-end gap-3">
+            <textarea
+              v-model="consultationQuestion"
+              class="flex-1 resize-none border-none outline-none bg-transparent text-gray-800 placeholder-gray-400 text-sm sm:text-base leading-relaxed max-h-32 overflow-y-auto"
+              placeholder="고민을 입력하세요..."
+              rows="2"
+              @keydown.enter.exact.prevent="handleConsultationSend"
+              @keydown.enter.shift.exact="handleShiftEnter"
+            ></textarea>
+            <button
+              @click="handleConsultationSend"
+              :disabled="chatLoading || !consultationQuestion.trim()"
+              class="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 text-white flex items-center justify-center shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex-shrink-0"
+            >
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M22 2L11 13"></path>
+                <path d="M22 2l-7 20-4-9-9-4 20-7z"></path>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="flex gap-3 mb-6">
+            <button
+              @click="resetTest"
+              class="flex-1 py-3 px-6 rounded-2xl bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition-colors duration-200"
+            >
+              다시하기
+            </button>
+            <button
+              @click="saveResultAsImage"
+              class="flex-1 py-3 px-6 rounded-2xl bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200"
+            >
+              결과저장
+            </button>
+          </div>
+
+          <!-- Disclaimer -->
+          <div class="text-center">
+            <p class="text-xs sm:text-sm text-gray-500 leading-relaxed">
+              본 결과는 의료적 진단이 아닙니다.<br>
+              정확한 진단과 치료는 전문의와 상담하시기 바랍니다.
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -212,7 +279,6 @@
 <script setup lang="ts">
 import { ref, computed, nextTick, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 
 interface Question {
   id: number
@@ -236,7 +302,7 @@ const questions: Question[] = [
   {
     id: 2,
     text: "성관계를 시작할 만큼 충분한 발기가 되는 빈도는 어느 정도였나요?",
-    axisLabel: "발기 준비도",
+    axisLabel: "발기\n준비도",
   },
   {
     id: 3,
@@ -251,7 +317,7 @@ const questions: Question[] = [
   {
     id: 5,
     text: "전반적인 성관계 경험에 얼마나 만족하시나요?",
-    axisLabel: "관계 만족도",
+    axisLabel: "성관계\n만족도",
   },
 ]
 
@@ -269,6 +335,11 @@ const showResult = ref(false)
 const radarCanvas = ref<HTMLCanvasElement | null>(null)
 const sessionId = ref<string>('')
 const savingResult = ref(false)
+const consultationQuestion = ref('')
+const chatMessages = ref<Array<{ type: 'user' | 'ai'; text: string }>>([])
+const chatLoading = ref(false)
+const resultContainer = ref<HTMLElement | null>(null)
+const scoreDisplayElement = ref<HTMLElement | null>(null)
 
 // Generate anonymous session ID
 const generateSessionId = () => {
@@ -292,30 +363,21 @@ const saveTestResult = async () => {
   
   try {
     savingResult.value = true
-    const nuxtApp = useNuxtApp()
-    const db = nuxtApp.$db as any
-    
-    if (!db) {
-      console.warn('Firestore not available')
-      return
-    }
-
     const userId = generateSessionId()
-    const testData = {
-      user_id: userId,
-      test_date: serverTimestamp(),
-      q1_score: answers.value[1] || 0,
-      q2_score: answers.value[2] || 0,
-      q3_score: answers.value[3] || 0,
-      q4_score: answers.value[4] || 0,
-      q5_score: answers.value[5] || 0,
-      total_score: totalScore.value,
-      severity_category: resultCategory.value,
-      clientType: 'web',
-    }
-
-    await addDoc(collection(db, 'iiefTests'), testData)
-    console.log('Test result saved to Firestore')
+    
+    await $fetch('/api/save-test-result', {
+      method: 'POST',
+      body: {
+        user_id: userId,
+        q1_score: answers.value[1] || 0,
+        q2_score: answers.value[2] || 0,
+        q3_score: answers.value[3] || 0,
+        q4_score: answers.value[4] || 0,
+        q5_score: answers.value[5] || 0,
+        total_score: totalScore.value,
+        severity_category: resultCategory.value,
+      },
+    })
   } catch (error: any) {
     console.error('Error saving test result:', error)
     // Don't show error to user, just log it
@@ -401,29 +463,67 @@ const chatbotOpeningMessage = `반가워요. 남자의 섬 입니다.
 
 오늘 어떤 점이 가장 신경 쓰이셨나요?`
 
-const nextQuestion = () => {
-  if (!answers.value[currentQuestion.value.id]) return
+const nextQuestion = async () => {
+  // 현재 질문 인덱스 확인
+  if (currentQuestionIndex.value < 0 || currentQuestionIndex.value >= questions.length) {
+    console.error('Invalid question index:', currentQuestionIndex.value)
+    return
+  }
+  
+  const currentQ = questions[currentQuestionIndex.value]
+  if (!currentQ) {
+    console.error('Question not found at index:', currentQuestionIndex.value)
+    return
+  }
+  
+  // 현재 질문에 답이 없으면 리턴
+  if (!answers.value[currentQ.id]) {
+    console.log('No answer for question', currentQ.id)
+    return
+  }
   
   if (currentQuestionIndex.value < questions.length - 1) {
+    // 다음 질문으로 이동
     currentQuestionIndex.value++
   } else {
+    // 마지막 질문이면 결과 표시
+    console.log('Showing results, total score:', totalScore.value)
     showResult.value = true
-    nextTick(() => {
-      drawRadarChart()
-      // Save result to Firestore when showing results
-      saveTestResult()
-    })
+    await nextTick()
+    drawRadarChart()
+    // Save result to Firestore when showing results
+    saveTestResult()
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   generateSessionId()
+  
+  // Track page view
+  try {
+    await $fetch('/api/page-view', {
+      method: 'POST',
+      body: {
+        page: 'vitality-test',
+      },
+    })
+  } catch (error) {
+    // Silent fail
+  }
 })
 
 const previousQuestion = () => {
   if (currentQuestionIndex.value > 0) {
     currentQuestionIndex.value--
   }
+}
+
+const resetTest = () => {
+  answers.value = {}
+  currentQuestionIndex.value = 0
+  showResult.value = false
+  chatMessages.value = []
+  consultationQuestion.value = ''
 }
 
 const drawRadarChart = () => {
@@ -435,7 +535,7 @@ const drawRadarChart = () => {
 
   const centerX = canvas.width / 2
   const centerY = canvas.height / 2
-  const radius = Math.min(centerX, centerY) - 40
+  const radius = Math.min(centerX, centerY) - 80 // 차트 크기 줄임 (60 -> 80, 더 작은 차트)
   const numAxes = 5
   const angleStep = (Math.PI * 2) / numAxes
 
@@ -464,18 +564,43 @@ const drawRadarChart = () => {
     ctx.stroke()
   }
 
-  // Draw labels
+  // Draw labels (라벨을 차트에 가깝게 배치하여 잘림 방지)
   ctx.fillStyle = '#475569'
-  ctx.font = '14px sans-serif'
-  ctx.textAlign = 'center'
+  ctx.font = 'bold 20px sans-serif' // 글씨 크기 증가 (18px -> 20px)
   ctx.textBaseline = 'middle'
   
   questions.forEach((q, i) => {
     const angle = i * angleStep - Math.PI / 2
-    const labelRadius = radius + 25
-    const x = centerX + Math.cos(angle) * labelRadius
+    const labelRadius = radius + 25 // 라벨을 차트에 가깝게 배치 (70 -> 25)
+    let x = centerX + Math.cos(angle) * labelRadius
     const y = centerY + Math.sin(angle) * labelRadius
-    ctx.fillText(q.axisLabel, x, y)
+    
+    // 텍스트 정렬 조정 (각도에 따라)
+    if (Math.abs(Math.cos(angle)) < 0.1) {
+      // 위/아래
+      ctx.textAlign = 'center'
+    } else if (Math.cos(angle) > 0) {
+      // 오른쪽
+      ctx.textAlign = 'left'
+      x = x + 5 // 약간의 여백만
+    } else {
+      // 왼쪽
+      ctx.textAlign = 'right'
+      x = x - 5 // 약간의 여백만
+    }
+    
+    // 줄바꿈이 있는 경우 처리
+    const labelText = q.axisLabel
+    if (labelText.includes('\n')) {
+      const lines = labelText.split('\n')
+      const lineHeight = 22
+      const startY = y - ((lines.length - 1) * lineHeight) / 2
+      lines.forEach((line, lineIndex) => {
+        ctx.fillText(line, x, startY + lineIndex * lineHeight)
+      })
+    } else {
+      ctx.fillText(labelText, x, y)
+    }
   })
 
   // Draw data polygon
@@ -521,8 +646,193 @@ const goToHome = () => {
   router.push('/')
 }
 
-const goToChat = () => {
-  router.push('/chat')
+const handleShiftEnter = () => {
+  // Shift+Enter는 줄바꿈 허용
+}
+
+const handleConsultationSend = async () => {
+  if (!consultationQuestion.value.trim() || chatLoading.value) return
+
+  const userMessage = consultationQuestion.value.trim()
+  consultationQuestion.value = ''
+
+  // 사용자 메시지 추가
+  chatMessages.value.push({
+    type: 'user',
+    text: userMessage,
+  })
+
+  chatLoading.value = true
+
+  try {
+    // 테스트 결과 데이터 준비
+    const testResultData = {
+      totalScore: totalScore.value,
+      resultCategory: resultCategory.value,
+      severityCategory: severityCategory.value,
+      q1Score: answers.value[1] || 0,
+      q2Score: answers.value[2] || 0,
+      q3Score: answers.value[3] || 0,
+      q4Score: answers.value[4] || 0,
+      q5Score: answers.value[5] || 0,
+      summaryText: summaryText.value,
+      bodyComment: bodyComment.value,
+      mindComment: mindComment.value,
+    }
+
+    const res = await $fetch<{ reply: string; summary: string }>('/api/ai-chat', {
+      method: 'POST',
+      body: {
+        userText: userMessage,
+        sessionType: 'mental',
+        testResult: testResultData, // 테스트 결과 데이터 전달
+      },
+    })
+
+    // AI 응답 추가
+    chatMessages.value.push({
+      type: 'ai',
+      text: res.reply,
+    })
+  } catch (error: any) {
+    console.error('Chat API Error:', error)
+    let errorMessage = '죄송합니다. 지금은 상담 서버에 문제가 있어 응답을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.'
+    
+    if (error.status === 400) {
+      errorMessage = error.data?.message || error.statusMessage || '요청 형식이 올바르지 않습니다. 다시 시도해 주세요.'
+    } else if (error.status === 500) {
+      errorMessage = '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'
+    }
+    
+    chatMessages.value.push({
+      type: 'ai',
+      text: errorMessage,
+    })
+  } finally {
+    chatLoading.value = false
+    // Scroll to bottom of chat messages
+    nextTick(() => {
+      const chatContainer = document.querySelector('.space-y-4')
+      if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight
+      }
+    })
+  }
+}
+
+const saveResultAsImage = async () => {
+  if (!resultContainer.value) {
+    alert('결과를 불러올 수 없습니다.')
+    return
+  }
+
+  try {
+    // Vue DOM 렌더링이 끝나도록 잠깐 대기
+    await nextTick()
+    await new Promise(resolve => setTimeout(resolve, 300))
+
+    // 폰트 로딩 대기 (Pretendard 등)
+    if (document.fonts && document.fonts.ready) {
+      await document.fonts.ready
+    }
+    
+    // 추가 대기 시간 (폰트 완전 로딩 보장)
+    await new Promise(resolve => setTimeout(resolve, 200))
+
+    // html-to-image 동적 import
+    const { toPng } = await import('html-to-image')
+
+    const node = resultContainer.value as HTMLElement
+
+    // 네트워크 요청을 차단하여 폰트 재로드 방지
+    const originalFetch = window.fetch
+    const originalXHROpen = XMLHttpRequest.prototype.open
+    const originalXHRSend = XMLHttpRequest.prototype.send
+    
+    window.fetch = function(...args) {
+      const url = args[0]?.toString() || ''
+      // Pretendard 폰트 관련 요청 차단
+      if (url.includes('pretendard') || url.includes('woff') || url.includes('woff2')) {
+        // 빈 응답 반환 (에러 방지)
+        return Promise.resolve(new Response('', { status: 200 }))
+      }
+      return originalFetch.apply(this, args)
+    }
+    
+    // XMLHttpRequest도 차단
+    XMLHttpRequest.prototype.open = function(method: string, url: string | URL, async?: boolean, username?: string | null, password?: string | null) {
+      const urlStr = url.toString()
+      if (urlStr.includes('pretendard') || urlStr.includes('woff') || urlStr.includes('woff2')) {
+        // 빈 URL로 설정하여 요청 방지
+        return (originalXHROpen as any).call(this, method, 'about:blank', async ?? true, username, password)
+      }
+      return (originalXHROpen as any).call(this, method, url, async ?? true, username, password)
+    }
+
+    // 폰트 및 CSS 관련 에러를 무시하고 계속 진행
+    const originalConsoleError = console.error
+    console.error = (...args: any[]) => {
+      const errorText = args.map(arg => String(arg)).join(' ')
+      // 폰트 및 CSS 보안 관련 에러는 무시
+      if (errorText.includes('ERR_INSUFFICIENT_RESOURCES') || 
+          errorText.includes('pretendard') ||
+          errorText.includes('cssRules') ||
+          errorText.includes('SecurityError') ||
+          errorText.includes('Cannot access rules')) {
+        return
+      }
+      originalConsoleError.apply(console, args)
+    }
+
+    let dataUrl: string
+    
+    try {
+      dataUrl = await toPng(node, {
+        cacheBust: false,          // 외부 폰트 재로드 방지
+        pixelRatio: 2,             // 고해상도
+        backgroundColor: '#ffffff',
+      })
+    } catch (error: any) {
+      // CSS 보안 오류나 폰트 관련 에러인 경우 재시도
+      const errorMessage = error?.message || error?.toString() || ''
+      if (errorMessage.includes('ERR_INSUFFICIENT_RESOURCES') || 
+          errorMessage.includes('cssRules') || 
+          errorMessage.includes('SecurityError') ||
+          errorMessage.includes('Cannot access rules')) {
+        // CSS 인라인을 시도하지 않고 바로 캡처 (최소 옵션)
+        try {
+          dataUrl = await toPng(node, {
+            pixelRatio: 2,
+            backgroundColor: '#ffffff',
+          })
+        } catch (retryError: any) {
+          // 마지막 시도: 기본 옵션만
+          dataUrl = await toPng(node, {
+            backgroundColor: '#ffffff',
+          })
+        }
+      } else {
+        throw error
+      }
+    } finally {
+      // 원래 함수들 복원
+      window.fetch = originalFetch
+      XMLHttpRequest.prototype.open = originalXHROpen
+      XMLHttpRequest.prototype.send = originalXHRSend
+      console.error = originalConsoleError
+    }
+
+    // 다운로드 링크 생성
+    const link = document.createElement('a')
+    link.download = `IIEF-5-결과-${Date.now()}.png`
+    link.href = dataUrl
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  } catch (error) {
+    console.error('Error saving image:', error)
+    alert('이미지 저장 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.')
+  }
 }
 
 // Data schema for Google Looker Studio

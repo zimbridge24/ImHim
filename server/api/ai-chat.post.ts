@@ -5,7 +5,8 @@ import { getAdminFirestore } from '../plugins/firebase-admin'
 import { FieldValue } from 'firebase-admin/firestore'
 import { createHash } from 'crypto'
 
-const SYSTEM_PROMPT = `Your name is "Him Mate".
+const getSystemPrompt = (testResult?: any) => {
+  let basePrompt = `Your name is "Him Mate".
 
 You are the sexual-health & mental-performance AI coach for the brand "Iam Him".
 
@@ -28,12 +29,29 @@ Guardrails:
 Goal:
 • Identify whether the issue is physical (Body) or psychological (Mind)
 • For hair loss concerns, provide lifestyle, nutritional, and stress management guidance (never prescribe medications)
-• Always finish with a short, clear "Action Plan".
+• Always finish with a short, clear "Action Plan".`
 
-At the end, generate a 3-line summary in this exact format:
+  // 테스트 결과가 있으면 컨텍스트로 추가
+  if (testResult) {
+    basePrompt += `\n\nIMPORTANT CONTEXT - User's IIEF-5 Test Results:
+• Total Score: ${testResult.totalScore}/25
+• Category: ${testResult.resultCategory} (${testResult.severityCategory})
+• Question Scores: Q1=${testResult.q1Score}, Q2=${testResult.q2Score}, Q3=${testResult.q3Score}, Q4=${testResult.q4Score}, Q5=${testResult.q5Score}
+• Summary: ${testResult.summaryText}
+• Body Analysis: ${testResult.bodyComment}
+• Mind Analysis: ${testResult.mindComment}
+
+When the user asks about their test results (e.g., "내 결과에 대해 어떻게 생각해?", "이 점수는 어떤가요?", "결과를 설명해줘"), you MUST provide detailed, empathetic analysis based on these test results. This is a legitimate health consultation related to their test results, so respond helpfully and provide guidance.`
+
+  }
+
+  basePrompt += `\n\nAt the end, generate a 3-line summary in this exact format:
 [주요 증상 / 원인 추정 / 제안 솔루션]
 
 Always respond in Korean.`
+
+  return basePrompt
+}
 
 export default defineEventHandler(async (event) => {
   // GET 요청 차단
@@ -54,9 +72,9 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  let body: { userText?: string; sessionType?: string }
+  let body: { userText?: string; sessionType?: string; testResult?: any }
   try {
-    body = await readBody<{ userText: string; sessionType: string }>(event)
+    body = await readBody<{ userText: string; sessionType: string; testResult?: any }>(event)
   } catch (error: any) {
     console.error('readBody error:', error)
     throw createError({
@@ -66,7 +84,7 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  console.log('Received body:', { userText: body?.userText?.substring(0, 50), sessionType: body?.sessionType })
+  console.log('Received body:', { userText: body?.userText?.substring(0, 50), sessionType: body?.sessionType, hasTestResult: !!body?.testResult })
 
   if (!body || typeof body !== 'object') {
     throw createError({
@@ -140,7 +158,7 @@ export default defineEventHandler(async (event) => {
         messages: [
           {
             role: 'system',
-            content: SYSTEM_PROMPT,
+            content: getSystemPrompt(body.testResult),
           },
           {
             role: 'user',
