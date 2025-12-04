@@ -497,7 +497,7 @@ const nextQuestion = async () => {
 }
 
 onMounted(async () => {
-  generateSessionId()
+  const userId = generateSessionId()
   
   // Track page view
   try {
@@ -505,10 +505,12 @@ onMounted(async () => {
       method: 'POST',
       body: {
         page: 'vitality-test',
+        user_id: userId,
       },
     })
   } catch (error) {
     // Silent fail
+    console.warn('Failed to track page view:', error)
   }
 })
 

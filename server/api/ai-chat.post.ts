@@ -139,10 +139,13 @@ export default defineEventHandler(async (event) => {
         status: 'pending', // AI 응답 대기 중
         createdAt: FieldValue.serverTimestamp(),
       })
+      console.log('AI session created:', { sessionType, hasTestResult: !!body.testResult })
+    } else {
+      console.warn('Firestore not initialized, AI session not saved')
     }
   } catch (firestoreError: any) {
     // Firestore 저장 실패는 로그만 남기고 계속 진행
-    console.warn('Firestore initial save failed:', firestoreError.message)
+    console.error('Firestore initial save failed:', firestoreError.message, firestoreError.stack)
   }
 
   try {
@@ -212,6 +215,7 @@ export default defineEventHandler(async (event) => {
             status: 'completed',
             completedAt: FieldValue.serverTimestamp(),
           })
+          console.log('AI session updated:', { sessionType, summary: summary.substring(0, 50) })
         } else {
           // 문서가 없으면 새로 생성 (fallback)
           await db.collection('aiSessions').add({
@@ -225,11 +229,14 @@ export default defineEventHandler(async (event) => {
             createdAt: FieldValue.serverTimestamp(),
             completedAt: FieldValue.serverTimestamp(),
           })
+          console.log('AI session created (fallback):', { sessionType })
         }
+      } else {
+        console.warn('Firestore not initialized, AI session not saved')
       }
     } catch (firestoreError: any) {
       // Firestore 저장 실패는 로그만 남기고 계속 진행
-      console.warn('Firestore update failed:', firestoreError.message)
+      console.error('Firestore update failed:', firestoreError.message, firestoreError.stack)
     }
 
     return {

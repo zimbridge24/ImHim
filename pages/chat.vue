@@ -208,18 +208,32 @@ const handleSend = async () => {
   }
 }
 
+// Function to generate a simple session ID
+const generateSessionId = () => {
+  let sessionId = sessionStorage.getItem('app_session_id')
+  if (!sessionId) {
+    sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    sessionStorage.setItem('app_session_id', sessionId)
+  }
+  return sessionId
+}
+
 // Auto-send question from test result page
 onMounted(async () => {
+  const userId = generateSessionId()
+  
   // Track page view
   try {
     await $fetch('/api/page-view', {
       method: 'POST',
       body: {
         page: 'chat',
+        user_id: userId,
       },
     })
   } catch (error) {
     // Silent fail
+    console.warn('Failed to track page view:', error)
   }
   
   nextTick(() => {

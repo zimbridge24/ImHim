@@ -83,17 +83,30 @@ import { onMounted } from 'vue'
 
 const router = useRouter()
 
+// Function to generate a simple session ID
+const generateSessionId = () => {
+  let sessionId = sessionStorage.getItem('app_session_id')
+  if (!sessionId) {
+    sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    sessionStorage.setItem('app_session_id', sessionId)
+  }
+  return sessionId
+}
+
 // Track page view
 onMounted(async () => {
+  const userId = generateSessionId()
   try {
     await $fetch('/api/page-view', {
       method: 'POST',
       body: {
         page: 'index',
+        user_id: userId,
       },
     })
   } catch (error) {
     // Silent fail - don't interrupt user experience
+    console.warn('Failed to track page view:', error)
   }
 })
 

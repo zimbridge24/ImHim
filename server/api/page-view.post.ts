@@ -12,9 +12,9 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  let body: { page?: string }
+  let body: { page?: string; user_id?: string }
   try {
-    body = await readBody<{ page: string }>(event)
+    body = await readBody<{ page: string; user_id?: string }>(event)
   } catch (error: any) {
     throw createError({
       statusCode: 400,
@@ -38,13 +38,17 @@ export default defineEventHandler(async (event) => {
     if (db) {
       await db.collection('pageViews').add({
         page: body.page,
+        user_id: body.user_id || `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
         timestamp: FieldValue.serverTimestamp(),
         clientType: 'web',
         ipHash,
       })
+      console.log('Page view saved:', { page: body.page, user_id: body.user_id })
+    } else {
+      console.warn('Firestore not initialized, page view not saved')
     }
   } catch (error: any) {
-    console.warn('Failed to save page view:', error.message)
+    console.error('Failed to save page view:', error.message, error.stack)
     // Silent fail - don't interrupt user experience
   }
 

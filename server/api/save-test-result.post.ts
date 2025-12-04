@@ -51,9 +51,12 @@ export default defineEventHandler(async (event) => {
         clientType: 'web',
         ipHash,
       })
+      console.log('Test result saved:', { user_id: body.user_id, total_score: body.total_score })
+    } else {
+      console.warn('Firestore not initialized, test result not saved')
     }
   } catch (error: any) {
-    console.warn('Failed to save test result:', error.message)
+    console.error('Failed to save test result:', error.message, error.stack)
     // Silent fail
   }
 
