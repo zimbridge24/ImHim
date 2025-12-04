@@ -26,22 +26,19 @@
         </button>
       </div>
 
-      <!-- Header with Logo -->
-      <div class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-6">
+      <!-- Logo at top left -->
+      <div class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-4 pb-4">
+        <img 
+          src="/logo.png" 
+          alt="ImHim Logo" 
+          class="h-12 sm:h-16 md:h-20 w-auto object-contain cursor-pointer hover:opacity-80 transition-opacity duration-200"
+          @click="goToHome"
+        />
+      </div>
+
+      <!-- Header -->
+      <div class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pb-6">
         <div class="flex flex-col items-center justify-center mb-8">
-          <div 
-            class="flex items-center gap-3 mb-4 cursor-pointer hover:opacity-80 transition-opacity duration-200"
-            @click="goToHome"
-          >
-            <img 
-              src="/logo.png" 
-              alt="I'm힘 Logo" 
-              class="h-12 sm:h-16 md:h-20 w-auto object-contain drop-shadow-lg"
-            />
-            <h1 class="text-3xl sm:text-4xl md:text-5xl font-semibold text-gray-800 tracking-tight leading-none">
-              I'm힘
-            </h1>
-          </div>
           <h2 class="text-2xl sm:text-3xl font-medium text-gray-700 mb-3">
             Mind & Confidence Talk
           </h2>
@@ -185,11 +182,21 @@ const handleSend = async () => {
       type: 'ai',
       text: res.reply,
     })
-  } catch (error) {
-    console.error(error)
+  } catch (error: any) {
+    console.error('Chat API Error:', error)
+    console.error('Error details:', error.data, error.status, error.statusMessage)
+    
+    let errorMessage = '죄송합니다. 지금은 상담 서버에 문제가 있어 응답을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.'
+    
+    if (error.status === 400) {
+      errorMessage = error.data?.message || error.statusMessage || '요청 형식이 올바르지 않습니다. 다시 시도해 주세요.'
+    } else if (error.status === 500) {
+      errorMessage = '서버 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.'
+    }
+    
     messages.value.push({
       type: 'ai',
-      text: '죄송합니다. 지금은 상담 서버에 문제가 있어 응답을 불러오지 못했습니다. 잠시 후 다시 시도해 주세요.',
+      text: errorMessage,
     })
   } finally {
     loading.value = false

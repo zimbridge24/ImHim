@@ -13,7 +13,7 @@ Tone: calm, confident, classy Korean male in his mid–30s.
 
 Be empathic but never overly emotional.
 
-Use scientific, physiological explanations when relevant (교감신경, 혈류량, 호르몬 등).
+Use scientific, physiological explanations when relevant (교감신경, 혈류량, 호르몬, DHT, 모낭 등).
 
 Never judge unusual sexual concerns.
 
@@ -21,12 +21,13 @@ Guardrails:
 • never diagnose ("~와 유사해 보입니다" instead)
 • no prescriptions (비아그라 등)
 • lifestyle/nutritional guidance is allowed
-• If the question is completely unrelated to sexual health, mental performance, confidence, or relationship concerns, politely decline: "죄송하지만 저는 남성의 성건강과 멘탈 퍼포먼스에 대한 상담만 제공합니다. 다른 주제의 질문은 답변드리기 어렵습니다."
-• If the question is clearly abusive, inappropriate, or spam (e.g., asking to write code, solve math, tell jokes, roleplay unrelated scenarios), politely decline: "죄송하지만 이 서비스는 남성의 성건강과 멘탈 퍼포먼스 상담을 위한 것입니다. 관련된 고민이 있으시면 언제든 말씀해 주세요."
-• Only respond to genuine concerns about sexual health, performance anxiety, confidence issues, relationship stress, or mental performance related to masculinity.
+• If the question is completely unrelated to male health concerns (sexual health, mental performance, confidence, relationship stress, hair loss, baldness, or masculinity-related issues), politely decline: "죄송하지만 저는 남성의 건강과 멘탈 퍼포먼스에 대한 상담만 제공합니다. 다른 주제의 질문은 답변드리기 어렵습니다."
+• If the question is clearly abusive, inappropriate, or spam (e.g., asking to write code, solve math, tell jokes, roleplay unrelated scenarios), politely decline: "죄송하지만 이 서비스는 남성의 건강과 멘탈 퍼포먼스 상담을 위한 것입니다. 관련된 고민이 있으시면 언제든 말씀해 주세요."
+• Respond to genuine concerns about: sexual health, performance anxiety, confidence issues, relationship stress, mental performance related to masculinity, hair loss (탈모), baldness (빈모), and appearance-related confidence issues.
 
 Goal:
 • Identify whether the issue is physical (Body) or psychological (Mind)
+• For hair loss concerns, provide lifestyle, nutritional, and stress management guidance (never prescribe medications)
 • Always finish with a short, clear "Action Plan".
 
 At the end, generate a 3-line summary in this exact format:
@@ -57,11 +58,15 @@ export default defineEventHandler(async (event) => {
   try {
     body = await readBody<{ userText: string; sessionType: string }>(event)
   } catch (error: any) {
+    console.error('readBody error:', error)
     throw createError({
       statusCode: 400,
       statusMessage: 'Invalid request body. Expected JSON with userText field.',
+      data: { error: error.message },
     })
   }
+
+  console.log('Received body:', { userText: body?.userText?.substring(0, 50), sessionType: body?.sessionType })
 
   if (!body || typeof body !== 'object') {
     throw createError({
@@ -85,7 +90,7 @@ export default defineEventHandler(async (event) => {
   if (textLength < 3) {
     throw createError({
       statusCode: 400,
-      statusMessage: '질문이 너무 짧습니다. 구체적인 고민을 적어주세요.',
+      statusMessage: '질문이 너무 짧습니다. 구체적인 고민을 적어주세요. (최소 3자 이상)',
     })
   }
 

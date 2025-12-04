@@ -1,29 +1,26 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-purple-50 via-indigo-50 to-pink-50 flex flex-col items-center py-12 sm:py-16 px-4 sm:px-6 font-sans">
+    <!-- Logo at top left -->
+    <div class="w-full max-w-6xl px-4 sm:px-6 mb-8">
+      <img 
+        src="/logo.png" 
+        alt="ImHim Logo" 
+        class="h-12 sm:h-16 md:h-20 w-auto object-contain"
+      />
+    </div>
+
     <!-- Hero Section -->
     <div class="text-center mb-16 sm:mb-20 mt-6 sm:mt-8 max-w-4xl">
-      <div class="flex items-center justify-center gap-4 mb-8">
-        <img 
-          src="/logo.png" 
-          alt="I'm힘 Logo" 
-          class="h-16 sm:h-20 md:h-24 lg:h-28 w-auto object-fit contain drop-shadow-sm"
-        />
-        <h1 class="text-5xl sm:text-6xl md:text-7xl font-black tracking-tight m-0 leading-none font-sans">
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 inline-block" style="text-shadow: 2px 2px 4px rgba(0,0,0,0.1), 4px 4px 8px rgba(0,0,0,0.1); letter-spacing: -0.02em;">I'm</span>
-          <span class="mx-2"></span>
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 inline-block" style="font-size: 1.1em; text-shadow: 2px 2px 4px rgba(0,0,0,0.1), 4px 4px 8px rgba(0,0,0,0.1); letter-spacing: -0.02em;">힘</span>
-        </h1>
-      </div>
       <p class="text-lg sm:text-xl md:text-2xl text-gray-600 m-0 font-normal leading-relaxed">
         남성의 몸과 자신감을 회복하는 공간
       </p>
     </div>
 
     <!-- Cards Section -->
-    <div class="flex flex-col md:flex-row gap-6 md:gap-8 w-full max-w-6xl">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 w-full max-w-6xl">
       <!-- Card 1: Vitality Care -->
       <div 
-        class="group bg-white/95 backdrop-blur-xl rounded-3xl p-8 md:p-12 cursor-pointer transition-all duration-500 shadow-lg hover:shadow-2xl hover:-translate-y-3 hover:bg-white border border-white/60 flex-1"
+        class="group bg-white/95 backdrop-blur-xl rounded-3xl p-8 md:p-12 cursor-pointer transition-all duration-500 shadow-lg hover:shadow-2xl hover:-translate-y-3 hover:bg-white border border-white/60"
         @click="handleVitalityClick"
       >
         <div class="mb-6">
@@ -46,7 +43,7 @@
 
       <!-- Card 2: Mind & Confidence Talk -->
       <div 
-        class="group bg-white/95 backdrop-blur-xl rounded-3xl p-8 md:p-12 cursor-pointer transition-all duration-500 shadow-lg hover:shadow-2xl hover:-translate-y-3 hover:bg-white border border-white/60 flex-1"
+        class="group bg-white/95 backdrop-blur-xl rounded-3xl p-8 md:p-12 cursor-pointer transition-all duration-500 shadow-lg hover:shadow-2xl hover:-translate-y-3 hover:bg-white border border-white/60"
         @click="handleChatClick"
       >
         <div class="mb-6">
@@ -66,6 +63,29 @@
           성적 고민, 스트레스, 불안을 익명으로 안전하게 상담할 수 있습니다.
         </p>
       </div>
+
+      <!-- Card 3: Vitality Self Check -->
+      <div 
+        class="group bg-white/95 backdrop-blur-xl rounded-3xl p-8 md:p-12 cursor-pointer transition-all duration-500 shadow-lg hover:shadow-2xl hover:-translate-y-3 hover:bg-white border border-white/60"
+        @click="handleTestClick"
+      >
+        <div class="mb-6">
+          <div class="w-12 h-12 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-2xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 21C12 21 5 13.5 5 9.5C5 7.01472 7.01472 5 9.5 5C11.038 5 12.5 5.879 13 7.15385C13.5 5.879 14.962 5 16.5 5C18.9853 5 21 7.01472 21 9.5C21 13.5 14 21 14 21H12Z"></path>
+            </svg>
+          </div>
+          <h2 class="text-2xl md:text-3xl font-semibold mb-3 text-gray-800 tracking-tight">
+            Vitality Self Check
+          </h2>
+          <p class="text-sm text-gray-500 mb-5 font-medium tracking-wide uppercase">
+            국제 발기력 테스트(5문항) 기반 자가 체크
+          </p>
+        </div>
+        <p class="text-base text-gray-600 m-0 leading-relaxed font-light">
+          5개의 간단한 질문으로 나의 발기 컨디션 점수를 확인해보세요. (익명, 결과 저장 없음)
+        </p>
+      </div>
     </div>
   </div>
 </template>
@@ -79,5 +99,9 @@ const handleVitalityClick = () => {
 
 const handleChatClick = () => {
   router.push("/chat")
+}
+
+const handleTestClick = () => {
+  router.push("/vitality-test")
 }
 </script>
